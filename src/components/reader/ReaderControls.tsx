@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   BookMarked, 
@@ -40,6 +41,32 @@ export const ReaderControls = ({
   const { toast } = useToast();
   const [zoom, setZoom] = useState(100); // Store zoom level as percentage
 
+  useEffect(() => {
+    // Initialize zoom level in the iframe
+    const iframe = document.querySelector('iframe');
+    if (iframe) {
+      iframe.onload = () => {
+        try {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+          if (iframeDoc) {
+            const style = document.createElement('style');
+            style.textContent = `
+              body {
+                transform: scale(${zoom / 100});
+                transform-origin: top left;
+                width: ${100 / (zoom / 100)}% !important;
+                height: auto !important;
+              }
+            `;
+            iframeDoc.head.appendChild(style);
+          }
+        } catch (e) {
+          console.error('Error accessing iframe content:', e);
+        }
+      };
+    }
+  }, [zoom]);
+
   const handleZoomIn = () => {
     if (zoom < 200) { // Maximum zoom of 200%
       setZoom(prev => prev + 10);
@@ -48,13 +75,6 @@ export const ReaderControls = ({
         description: `Zoom level: ${zoom + 10}%`,
         duration: 1000,
       });
-      
-      // Apply zoom to iframe
-      const iframe = document.querySelector('iframe');
-      if (iframe) {
-        iframe.style.transform = `scale(${(zoom + 10) / 100})`;
-        iframe.style.transformOrigin = 'top left';
-      }
     }
   };
 
@@ -66,13 +86,6 @@ export const ReaderControls = ({
         description: `Zoom level: ${zoom - 10}%`,
         duration: 1000,
       });
-      
-      // Apply zoom to iframe
-      const iframe = document.querySelector('iframe');
-      if (iframe) {
-        iframe.style.transform = `scale(${(zoom - 10) / 100})`;
-        iframe.style.transformOrigin = 'top left';
-      }
     }
   };
 
