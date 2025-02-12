@@ -172,17 +172,13 @@ const BookReader = () => {
 
             <div className={`rounded-lg mb-4 ${
               viewMode === 'longStrip' ? 'h-auto' : 
-              viewMode === 'fitBoth' ? 'h-screen' : 
-              'aspect-[3/4] h-[800px]'
+              viewMode === 'fitBoth' ? 'h-[calc(100vh-12rem)]' : 
+              'h-[calc(100vh-12rem)]'
             }`}>
               {pdfUrl ? (
                 <iframe
                   src={pdfUrl}
-                  className={`w-full rounded-lg ${
-                    viewMode === 'longStrip' ? 'min-h-screen' :
-                    viewMode === 'fitBoth' ? 'h-full object-contain' :
-                    'h-full'
-                  }`}
+                  className="w-full h-full rounded-lg"
                   allow="autoplay"
                   loading="lazy"
                 ></iframe>

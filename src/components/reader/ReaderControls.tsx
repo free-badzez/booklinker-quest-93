@@ -1,5 +1,4 @@
 
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   BookMarked, 
@@ -9,9 +8,7 @@ import {
   MoveHorizontal, 
   ArrowDownToLine,
   Check,
-  X,
-  ZoomIn,
-  ZoomOut
+  X
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -39,55 +36,6 @@ export const ReaderControls = ({
   goToLastReadPage,
 }: ReaderControlsProps) => {
   const { toast } = useToast();
-  const [zoom, setZoom] = useState(100); // Store zoom level as percentage
-
-  useEffect(() => {
-    // Initialize zoom level in the iframe
-    const iframe = document.querySelector('iframe');
-    if (iframe) {
-      iframe.onload = () => {
-        try {
-          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-          if (iframeDoc) {
-            const style = document.createElement('style');
-            style.textContent = `
-              body {
-                transform: scale(${zoom / 100});
-                transform-origin: top left;
-                width: ${100 / (zoom / 100)}% !important;
-                height: auto !important;
-              }
-            `;
-            iframeDoc.head.appendChild(style);
-          }
-        } catch (e) {
-          console.error('Error accessing iframe content:', e);
-        }
-      };
-    }
-  }, [zoom]);
-
-  const handleZoomIn = () => {
-    if (zoom < 200) { // Maximum zoom of 200%
-      setZoom(prev => prev + 10);
-      toast({
-        title: "Zoom In",
-        description: `Zoom level: ${zoom + 10}%`,
-        duration: 1000,
-      });
-    }
-  };
-
-  const handleZoomOut = () => {
-    if (zoom > 50) { // Minimum zoom of 50%
-      setZoom(prev => prev - 10);
-      toast({
-        title: "Zoom Out",
-        description: `Zoom level: ${zoom - 10}%`,
-        duration: 1000,
-      });
-    }
-  };
 
   const handleReportError = () => {
     toast({
@@ -135,30 +83,6 @@ export const ReaderControls = ({
 
   return (
     <div className="space-y-2">
-      <div className="flex gap-2 mb-2">
-        <motion.button 
-          onClick={handleZoomIn}
-          className={`flex-1 flex items-center justify-center space-x-2 p-2 ${
-            isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-200'
-          } rounded transition-colors duration-200`}
-          whileTap={{ scale: 0.95 }}
-        >
-          <ZoomIn className="w-4 h-4" />
-          <span>Zoom In</span>
-        </motion.button>
-        
-        <motion.button 
-          onClick={handleZoomOut}
-          className={`flex-1 flex items-center justify-center space-x-2 p-2 ${
-            isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-200'
-          } rounded transition-colors duration-200`}
-          whileTap={{ scale: 0.95 }}
-        >
-          <ZoomOut className="w-4 h-4" />
-          <span>Zoom Out</span>
-        </motion.button>
-      </div>
-
       <motion.button 
         onClick={handleBookmarkToggle}
         className={`w-full flex items-center space-x-2 p-2 ${
